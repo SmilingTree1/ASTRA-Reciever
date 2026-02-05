@@ -30,8 +30,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.mapDisplay = LiveMapDisplay()
-        
-
+      
         self.setWindowTitle("Live Tracking")
         # Splitter so user can resize map / plots
         splitter = QSplitter(Qt.Horizontal)
@@ -61,7 +60,7 @@ class MainWindow(QWidget):
         layout.addLayout(controls_layout)
         layout.addWidget(splitter)
 
-                # remove all margins and spacing so graph uses maximum space
+        # remove all margins and spacing so graph uses maximum space
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         controls_layout.setContentsMargins(0, 0, 0, 0)
@@ -100,7 +99,6 @@ class MainWindow(QWidget):
 
 
 # Application entry point
-
 LoraReceiverInstance = LoraReceiver(data_queue)
 receiverThread = threading.Thread(target=LoraReceiverInstance.receive_data, daemon=True)
 receiverThread.start()

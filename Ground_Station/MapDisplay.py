@@ -1,10 +1,7 @@
 #from offline_folium import offline
 import folium
 
-
-
-
-
+# kml file unused now. The kml file can be opened in Google Earth later for route visualization
 class LiveKmlRoute:
     def _init_(self, filename):
         import simplekml
@@ -29,9 +26,10 @@ class LiveKmlRoute:
     def save(self):
         self.kml.save(self.filename)
 
+# Folium map 
 class LiveMapDisplay:
     def update(self, lat, lon):
-        map = folium.Map(location=[lat, lon], zoom_start=18)
+        map = folium.Map(location=[lat, lon], zoom_start=17)
         tooltop_text = f"Lat: {lat:.5f}, Lon: {lon:.5f}"
 
         custom_tooltip = folium.Tooltip(

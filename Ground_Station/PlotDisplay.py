@@ -64,20 +64,25 @@ class TwoSubplotCanvas(FigureCanvas):
             #dataFile.write(f"{packageID},{pressure},{alt},{lat},{lon}, {timeUTCString}\n")
             dataFile.flush()
             payloadData = data.split("#")
+
+            if len(payloadData) != 7:
+                print(f"Invalid data format: {data}")
+                continue
             
             try:
                 packageID = int(payloadData[1])
                 pressure = float(payloadData[2])
-                alt = float(payloadData[3])
-                lat = float(payloadData[4])
-                lon = float(payloadData[5])
+                alt = (payloadData[3])
+                lat = (payloadData[4])
+                lon = (payloadData[5])
                 timeUTCString = (payloadData[6]).strip()
                 #timeUTCString = time.time() - startTime
+
+
                 print("ID: ", packageID, " Pressure: ", pressure, " Altitude: ", alt, " Latitude: ", lat, " Longitude: ", lon, " Time: ", timeUTCString)
 
-
-            except Exception:
-                 print("data format mismatch")
+            except Exception as e:
+                 print(f"Error processing data: {e}")
                  continue
 
             try:
