@@ -53,9 +53,7 @@ class TwoSubplotCanvas(FigureCanvas):
 
 
     def update_plot(self):
-        print("Updating plot")
                # ensure axis uses a time formatter
-
         self.ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         self.ax2.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         while not self.dataQueue.empty():
@@ -68,12 +66,12 @@ class TwoSubplotCanvas(FigureCanvas):
             payloadData = data.split("#")
             
             try:
-                packageID = int(payloadData[0])
-                pressure = float(payloadData[1])
-                alt = float(payloadData[2])
-                lat = float(payloadData[3])
-                lon = float(payloadData[4])
-                timeUTCString = (payloadData[5]).strip()
+                packageID = int(payloadData[1])
+                pressure = float(payloadData[2])
+                alt = float(payloadData[3])
+                lat = float(payloadData[4])
+                lon = float(payloadData[5])
+                timeUTCString = (payloadData[6]).strip()
                 #timeUTCString = time.time() - startTime
                 print("ID: ", packageID, " Pressure: ", pressure, " Altitude: ", alt, " Latitude: ", lat, " Longitude: ", lon, " Time: ", timeUTCString)
 
@@ -126,8 +124,7 @@ class TwoSubplotCanvas(FigureCanvas):
             self.ax1.set_ylim(min_alt - alt_range * 0.1, max_alt + alt_range * 0.1)
             # self.ax1.set_ylim(200, 400)
             self.line1.set_data(time_data, altitude_data)
-            self.line1.set_color('green')
-            
+            self.line1.set_color('green')           
 
 
             pressure_data.append(pressure)
@@ -141,10 +138,6 @@ class TwoSubplotCanvas(FigureCanvas):
             # self.ax2.set_ylim(100, 1200)
             self.line2.set_data(time_data, pressure_data)
             self.line2.set_color('red')
-
-
-
-
 
             #self.LiveKmlRoute.add_point(lat, lon, alt)
         self.figure.autofmt_xdate()

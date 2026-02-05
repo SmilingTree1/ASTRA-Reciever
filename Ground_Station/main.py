@@ -76,11 +76,11 @@ class MainWindow(QWidget):
         # Timers
         self.plot_timer = QTimer()
         self.plot_timer.timeout.connect(self.plots.update_plot)
-        self.plot_timer.start(2000)
+        self.plot_timer.start(1000)
 
         self.map_timer = QTimer()
         self.map_timer.timeout.connect(self.map_update)
-        self.map_timer.start(5000)
+        self.map_timer.start(2000)
 
     def toggle_plot(self):
         """Toggle the plot timer (play/pause)."""

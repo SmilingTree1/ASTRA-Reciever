@@ -2,13 +2,16 @@ import serial
 import time
 
 # --- Configuration ---
-SERIAL_PORT = "/dev/tty.usbserial-A5069RR4"
+#SERIAL_PORT = "/dev/tty.usbserial-A5069RR4"
+SERIAL_PORT = "COM10"
+
 #/dev/tty.usbserial-A5069RR4 for lora rylr999
 BAUDRATE = 115200
 RECEIVER_ADDRESS = 2
 NETWORK_ID = 18 
 BAND = 915000000
 PARAMETER = "10,8,1,12"
+SENDER_ID = "ST26"
 # --- End Configuration ---
 
 
@@ -57,7 +60,7 @@ class LoraReceiver:
                         self.parse_and_print_received_data(raw)
                     else:
                         print(f"LoRa Response: {raw}")
-            time.sleep(1)
+            time.sleep(0.5)
 
     def parse_and_print_received_data(self, data):
         try:
@@ -65,7 +68,9 @@ class LoraReceiver:
             if len(parts) > 2:
                 msg = parts[2]
                 print(f"\nMessage received: {msg}")
-                self.dataQueue.put(msg)
+                
+                if msg.startswith(SENDER_ID):
+                    self.dataQueue.put(msg)
 
         except Exception as e:
             print(f"Error parsing data: {e} | Raw: {data}")
