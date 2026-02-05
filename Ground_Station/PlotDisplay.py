@@ -7,15 +7,11 @@ from datetime import datetime, date
 import matplotlib.dates as mdates
 import pytz
 
-
-
 pressure_data = []
 altitude_data = []
 time_data = []
 dataFile = open("RocketLog.txt", "a", encoding="utf-8")
 startTime = time.time()
-
-
 
 class TwoSubplotCanvas(FigureCanvas):
     def __init__(self, dataQueue, mapQueue):
@@ -63,8 +59,12 @@ class TwoSubplotCanvas(FigureCanvas):
             #dataFile.write(f"{packageID},{pressure},{alt},{lat},{lon}, {timeUTCString}\n")
             #dataFile.write(f"{packageID},{pressure},{alt},{lat},{lon}, {timeUTCString}\n")
             dataFile.flush()
-            payloadData = data.split("#")
 
+            payloadData = data.split("#")
+            
+            # Validation need to be improved, istead of ignoring sample fully when GPS unlocks in between
+            # try to estimate time from last good GPS data sample, if packet id is continuous 
+            # Example packet 10 has good GPS, 11 lost GPS, time for 11 can be estimated from 10
             if len(payloadData) != 7:
                 print(f"Invalid data format: {data}")
                 continue
@@ -72,17 +72,15 @@ class TwoSubplotCanvas(FigureCanvas):
             try:
                 packageID = int(payloadData[1])
                 pressure = float(payloadData[2])
-                alt = (payloadData[3])
-                lat = (payloadData[4])
-                lon = (payloadData[5])
+                alt = float(payloadData[3])
+                lat = float(payloadData[4])
+                lon = float(payloadData[5])
                 timeUTCString = (payloadData[6]).strip()
                 #timeUTCString = time.time() - startTime
-
-
                 print("ID: ", packageID, " Pressure: ", pressure, " Altitude: ", alt, " Latitude: ", lat, " Longitude: ", lon, " Time: ", timeUTCString)
 
-            except Exception as e:
-                 print(f"Error processing data: {e}")
+            except Exception:
+                 print("data format mismatch")
                  continue
 
             try:
@@ -94,22 +92,16 @@ class TwoSubplotCanvas(FigureCanvas):
                 dt_pst = dt_utc.astimezone(pytz.timezone('US/Pacific'))
                 xnum = mdates.date2num(dt_pst.replace(tzinfo=None))
 
-
             except ValueError:
                 # if parsing fails, skip this sample
                 print("Time format mismatch")
                 continue
-
-
             
-            self.mapQueue.put((lat, lon))
-            
+            self.mapQueue.put((lat, lon))            
             global pressure_data, altitude_data, latitude_data, longitude_data, time_data
 
             time_data.append(xnum)
-            time_data= time_data[-1200:]
-
-        
+            time_data= time_data[-1200:]        
 
             altitude_data.append(alt)
             altitude_data = altitude_data[-1200:]
@@ -129,8 +121,7 @@ class TwoSubplotCanvas(FigureCanvas):
             self.ax1.set_ylim(min_alt - alt_range * 0.1, max_alt + alt_range * 0.1)
             # self.ax1.set_ylim(200, 400)
             self.line1.set_data(time_data, altitude_data)
-            self.line1.set_color('green')           
-
+            self.line1.set_color('green')         
 
             pressure_data.append(pressure)
             pressure_data = pressure_data[-1200:]
@@ -144,8 +135,8 @@ class TwoSubplotCanvas(FigureCanvas):
             self.line2.set_data(time_data, pressure_data)
             self.line2.set_color('red')
 
+            # KML route for Google Earth visualization to b added later
             #self.LiveKmlRoute.add_point(lat, lon, alt)
+        # self.LiveKmlRoute.save()
         self.figure.autofmt_xdate()
         self.draw_idle()  
-        # self.LiveKmlRoute.save()
-        #self.draw()
